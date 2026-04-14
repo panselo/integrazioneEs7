@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Creazione Tabella</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .row { margin-bottom: 10px; }
+    label { display: inline-block; width: 120px; }
+    input, select { padding: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Creazione Tabella</h1>
+
+  <form id="tableForm" method="post" action="create_table.php">
+    <div class="row">
+      <label>Nome tabella</label>
+      <input name="table_name" required />
+    </div>
+
+    <h3>Colonne</h3>
+    <div id="columns"></div>
+
+    <button type="button" onclick="addColumn()">Aggiungi colonna</button>
+    <button type="submit">Crea tabella</button>
+  </form>
+
+  <script>
+    let colIndex = 0;
+
+    function addColumn() {
+      const container = document.getElementById('columns');
+      const div = document.createElement('div');
+      div.className = 'row';
+      div.innerHTML = `
+        <label>Colonna</label>
+        <input name="columns[${colIndex}][name]" placeholder="" required />
+        <select name="columns[${colIndex}][type]" required onchange="toggleLength(this)">
+          <option value="INT">INT</option>
+          <option value="VARCHAR">VARCHAR</option>
+          <option value="TEXT">TEXT</option>
+        </select>
+        <label>Lunghezza</label>
+        <input name="columns[${colIndex}][length]" type="number" min="1" max="255" placeholder="" disabled />
+        <label>
+          <input type="checkbox" name="columns[${colIndex}][notnull]" />
+          NOT NULL
+        </label>
+        <label>
+          <input type="checkbox" name="columns[${colIndex}][pk]" />
+          PK
+        </label>
+      `;
+      container.appendChild(div);
+      colIndex++;
+    }
+
+    function toggleLength(selectEl) {
+      const row = selectEl.closest('.row');
+      const lengthInput = row.querySelector('input[name$="[length]"]');
+      if (selectEl.value === 'VARCHAR') {
+        lengthInput.disabled = false;
+      } else {
+        lengthInput.value = '';
+        lengthInput.disabled = true;
+      }
+    }
+
+    // aggiunge una colonna di default
+    addColumn();
+  </script>
+</body>
+</html>
